@@ -36,27 +36,42 @@
         .app-container {
             width: 100%;
             max-width: 580px;
-            background: rgba(5, 5, 5, 0.65);
+            background: rgba(5, 5, 5, 0.7);
             backdrop-filter: blur(16px);
             border-radius: 48px;
             border: 1px solid rgba(255, 26, 26, 0.4);
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 26, 26, 0.2);
             z-index: 2;
             padding: 1.8rem 1.5rem;
             transition: all 0.3s;
         }
 
+        /* Neon Logo */
         .logo-wrapper {
             text-align: center;
             margin-bottom: 1rem;
         }
-        .logo-img {
+        .neon-logo {
             width: 100px;
             height: 100px;
+            margin: 0 auto;
+            background: radial-gradient(circle at 30% 30%, rgba(255,26,26,0.2), #000);
             border-radius: 50%;
-            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border: 2px solid #ff1a1a;
-            box-shadow: 0 0 20px rgba(255, 26, 26, 0.6);
+            box-shadow: 0 0 25px rgba(255, 26, 26, 0.7), inset 0 0 10px rgba(255,26,26,0.3);
+        }
+        .neon-logo span {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', monospace;
         }
 
         .typing-area {
@@ -120,6 +135,7 @@
             font-size: 0.9rem;
             color: white;
             outline: none;
+            font-family: monospace;
         }
         .glass-input:focus {
             border-color: #ff1a1a;
@@ -138,11 +154,16 @@
             cursor: pointer;
             transition: 0.2s;
             margin-top: 10px;
+            font-family: 'Orbitron', monospace;
         }
         .btn-neon:hover {
             background: #ff1a1a;
             color: #050505;
             box-shadow: 0 0 18px #ff1a1a;
+            transform: scale(1.02);
+        }
+        .btn-neon:active {
+            transform: scale(0.98);
         }
         .secondary-btn {
             background: transparent;
@@ -189,6 +210,7 @@
             color: #ff1a1a;
             text-shadow: 0 0 10px #ff1a1a;
             margin: 6px 0;
+            font-family: monospace;
         }
         input[type="range"] {
             width: 100%;
@@ -204,6 +226,7 @@
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 0 0 8px red;
+            border: 1px solid white;
         }
         .history-list {
             max-height: 210px;
@@ -282,7 +305,9 @@
         <!-- LOGIN PAGE -->
         <div id="loginPage">
             <div class="logo-wrapper">
-                <img src="https://i.postimg.cc/kG0vjjBK/file-00000000009c7209a084897cd4b72664.png" class="logo-img" alt="ANTINA">
+                <div class="neon-logo">
+                    <span>ANT</span>
+                </div>
             </div>
             <div class="typing-area">
                 <div class="typing-text" id="typingTitle"></div>
@@ -305,7 +330,9 @@
         <!-- DASHBOARD PAGE -->
         <div id="dashboardPage" class="hidden-page">
             <div class="flex-between">
-                <img src="https://i.postimg.cc/kG0vjjBK/file-00000000009c7209a084897cd4b72664.png" style="width:45px; height:45px; border-radius:50%; border:1px solid red;">
+                <div class="neon-logo" style="width: 50px; height: 50px;">
+                    <span style="font-size: 0.9rem;">ANT</span>
+                </div>
                 <button id="logoutDashboardBtn" class="btn-neon logout-btn">⤫ LOGOUT</button>
             </div>
             <div class="status-card">
@@ -329,227 +356,185 @@
     </div>
 
     <script>
-        // DOM Elements
-        const loginPage = document.getElementById('loginPage');
-        const dashboardPage = document.getElementById('dashboardPage');
-        const typingDiv = document.getElementById('typingTitle');
-        const accessInput = document.getElementById('accessKeyInput');
-        const confirmLoginBtn = document.getElementById('confirmLoginBtn');
-        const buyKeyBtn = document.getElementById('buyKeyBtn');
-        const errorDiv = document.getElementById('loginError');
-        const attackSlider = document.getElementById('attackSlider');
-        const sliderSecondsDisplay = document.getElementById('sliderSecondsDisplay');
-        const confirmAttackBtn = document.getElementById('confirmAttackBtn');
-        const historyContainer = document.getElementById('historyList');
-        const remainingSpan = document.getElementById('remainingTimeDashboard');
-        const logoutBtn = document.getElementById('logoutDashboardBtn');
-        const attackWarningSpan = document.getElementById('attackWarning');
-        const attackPanelCard = document.getElementById('attackPanelCard');
+        (function() {
+            // DOM Elements
+            const loginPage = document.getElementById('loginPage');
+            const dashboardPage = document.getElementById('dashboardPage');
+            const typingDiv = document.getElementById('typingTitle');
+            const accessInput = document.getElementById('accessKeyInput');
+            const confirmLoginBtn = document.getElementById('confirmLoginBtn');
+            const buyKeyBtn = document.getElementById('buyKeyBtn');
+            const errorDiv = document.getElementById('loginError');
+            const attackSlider = document.getElementById('attackSlider');
+            const sliderSecondsDisplay = document.getElementById('sliderSecondsDisplay');
+            const confirmAttackBtn = document.getElementById('confirmAttackBtn');
+            const historyContainer = document.getElementById('historyList');
+            const remainingSpan = document.getElementById('remainingTimeDashboard');
+            const logoutBtn = document.getElementById('logoutDashboardBtn');
+            const attackWarningSpan = document.getElementById('attackWarning');
+            const attackPanelCard = document.getElementById('attackPanelCard');
 
-        // State
-        let currentKeyData = null;
-        let globalCountdownInterval = null;
-        let activeAttackInterval = null;
-        let isAttackRunning = false;
-        let currentAttackTimeout = null;
+            // State
+            let currentKeyData = null;
+            let globalCountdownInterval = null;
+            let activeAttackInterval = null;
+            let isAttackRunning = false;
+            let currentAttackTimeout = null;
 
-        // Valid Keys Database
-        const validKeys = {
-            "ANTINA_60D_300S": { days: 60, maxSec: 300 },
-            "ANTINA_PERMANET_300S": { days: 6000, maxSec: 300 },
-            "ANTINA_60D_700S": { days: 60, maxSec: 700 },
-            "ANTINA_PERMANENT_700S": { days: 60000, maxSec: 700 }
-        };
-
-        // Sound Effect
-        function playSound() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                oscillator.connect(gain);
-                gain.connect(audioCtx.destination);
-                oscillator.type = 'sine';
-                oscillator.frequency.value = 880;
-                gain.gain.value = 0.1;
-                oscillator.start();
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.2);
-                oscillator.stop(audioCtx.currentTime + 0.2);
-                audioCtx.resume();
-            } catch(e) { console.log('Audio not supported'); }
-        }
-
-        function visualEffect(element) {
-            if(!element) return;
-            element.style.transform = 'scale(0.95)';
-            setTimeout(() => { if(element) element.style.transform = ''; }, 100);
-        }
-
-        // Price Chip: Redirect to Telegram with auto message
-        document.querySelectorAll('.price-chip').forEach(chip => {
-            chip.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const planText = chip.getAttribute('data-plan') || chip.innerText;
-                const message = `hey antina bro i need ${planText} please send me qr`;
-                const encodedMsg = encodeURIComponent(message);
-                window.open(`https://t.me/antinaseller?text=${encodedMsg}`, '_blank');
-                playSound();
-                visualEffect(chip);
-            });
-        });
-
-        // Login Logic
-        function handleLogin(keyValue) {
-            const key = keyValue.trim();
-            const keyData = validKeys[key];
-            
-            if(!keyData) {
-                playSound();
-                errorDiv.innerText = "❌ INVALID ACCESS KEY";
-                accessInput.classList.add('shake');
-                setTimeout(() => {
-                    accessInput.classList.remove('shake');
-                    errorDiv.innerText = "";
-                }, 1500);
-                return false;
-            }
-
-            const expiryTime = Date.now() + (keyData.days * 24 * 60 * 60 * 1000);
-            localStorage.setItem('antina_key', key);
-            localStorage.setItem('antina_expiry', expiryTime);
-            localStorage.setItem('antina_maxSeconds', keyData.maxSec);
-            
-            currentKeyData = {
-                maxSeconds: keyData.maxSec,
-                expiryTimestamp: expiryTime
+            // Valid Keys Database
+            const validKeys = {
+                "ANTINA_60D_300S": { days: 60, maxSec: 300 },
+                "ANTINA_PERMANET_300S": { days: 6000, maxSec: 300 },
+                "ANTINA_60D_700S": { days: 60, maxSec: 700 },
+                "ANTINA_PERMANENT_700S": { days: 60000, maxSec: 700 }
             };
-            
-            playSound();
-            visualEffect(confirmLoginBtn);
-            showDashboard();
-            return true;
-        }
 
-        // Auto Login Check
-        function checkAutoLogin() {
-            const savedKey = localStorage.getItem('antina_key');
-            const savedExpiry = localStorage.getItem('antina_expiry');
-            const savedMax = localStorage.getItem('antina_maxSeconds');
-            
-            if(savedKey && savedExpiry && savedMax) {
-                const expiryNum = parseInt(savedExpiry);
-                if(Date.now() < expiryNum) {
-                    currentKeyData = {
-                        maxSeconds: parseInt(savedMax),
-                        expiryTimestamp: expiryNum
-                    };
-                    showDashboard();
-                    return true;
-                } else {
-                    // Expired - clear storage
-                    localStorage.removeItem('antina_key');
-                    localStorage.removeItem('antina_expiry');
-                    localStorage.removeItem('antina_maxSeconds');
+            // Sound Effect (safe, no errors)
+            function playSound() {
+                try {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    oscillator.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = 880;
+                    gain.gain.value = 0.1;
+                    oscillator.start();
+                    gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.2);
+                    oscillator.stop(audioCtx.currentTime + 0.2);
+                    audioCtx.resume().catch(function() {});
+                } catch(e) { console.log('Audio not supported'); }
+            }
+
+            function visualEffect(element) {
+                if(!element) return;
+                element.style.transform = 'scale(0.95)';
+                setTimeout(function() { 
+                    if(element) element.style.transform = ''; 
+                }, 100);
+            }
+
+            // Price Chip: Redirect to Telegram with auto message
+            var priceChips = document.querySelectorAll('.price-chip');
+            for(var i = 0; i < priceChips.length; i++) {
+                priceChips[i].addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var planText = this.getAttribute('data-plan') || this.innerText;
+                    var message = "hey antina bro i need " + planText + " please send me qr";
+                    var encodedMsg = encodeURIComponent(message);
+                    window.open("https://t.me/antinaseller?text=" + encodedMsg, '_blank');
+                    playSound();
+                    visualEffect(this);
+                });
+            }
+
+            // Login Logic
+            function handleLogin(keyValue) {
+                var key = keyValue.trim();
+                var keyData = validKeys[key];
+                
+                if(!keyData) {
+                    playSound();
+                    errorDiv.innerText = "❌ INVALID ACCESS KEY";
+                    accessInput.classList.add('shake');
+                    setTimeout(function() {
+                        accessInput.classList.remove('shake');
+                        errorDiv.innerText = "";
+                    }, 1500);
+                    return false;
                 }
-            }
-            return false;
-        }
 
-        // Logout
-        function logout() {
-            playSound();
-            localStorage.removeItem('antina_key');
-            localStorage.removeItem('antina_expiry');
-            localStorage.removeItem('antina_maxSeconds');
-            
-            if(globalCountdownInterval) clearInterval(globalCountdownInterval);
-            stopCurrentAttack();
-            currentKeyData = null;
-            showLogin();
-            accessInput.value = '';
-        }
-
-        // Stop current attack
-        function stopCurrentAttack() {
-            if(activeAttackInterval) {
-                clearInterval(activeAttackInterval);
-                activeAttackInterval = null;
-            }
-            if(currentAttackTimeout) {
-                clearTimeout(currentAttackTimeout);
-                currentAttackTimeout = null;
-            }
-            isAttackRunning = false;
-            if(confirmAttackBtn) confirmAttackBtn.disabled = false;
-            if(attackPanelCard) attackPanelCard.classList.remove('attack-blocked');
-        }
-
-        // Add attack to history with live countdown
-        function addAttackToHistory(durationSeconds) {
-            // Remove placeholder if exists
-            if(historyContainer.children.length === 1 && historyContainer.children[0].innerText.includes("No attacks")) {
-                historyContainer.innerHTML = '';
-            }
-            
-            let remaining = durationSeconds;
-            const historyItem = document.createElement('div');
-            historyItem.className = 'history-item';
-            historyItem.innerHTML = `
-                <div>
-                    <strong>⚔️ ATTACK</strong> (${durationSeconds}s)<br>
-                    <small class="attack-timer">${remaining}s remaining</small>
-                </div>
-                <div><span class="attack-status">RUNNING</span></div>
-            `;
-            historyContainer.prepend(historyItem);
-            
-            // Limit history items
-            while(historyContainer.children.length > 8) {
-                historyContainer.removeChild(historyContainer.lastChild);
-            }
-            
-            const timerSpan = historyItem.querySelector('.attack-timer');
-            const statusSpan = historyItem.querySelector('.attack-status');
-            
-            const interval = setInterval(() => {
-                if(remaining > 0) {
-                    remaining--;
-                    if(timerSpan) timerSpan.textContent = `${remaining}s remaining`;
-                }
-                if(remaining <= 0) {
-                    clearInterval(interval);
-                    if(statusSpan) {
-                        statusSpan.textContent = 'COMPLETED';
-                        statusSpan.style.background = '#333';
-                    }
-                    historyItem.classList.add('completed');
-                    if(activeAttackInterval === interval) activeAttackInterval = null;
-                }
-            }, 1000);
-            
-            activeAttackInterval = interval;
-            return interval;
-        }
-
-        // Start new attack (only one at a time)
-        function startAttack(seconds) {
-            if(isAttackRunning) {
-                attackWarningSpan.textContent = "⚠️ Another attack is already running! Wait.";
-                setTimeout(() => {
-                    if(attackWarningSpan) attackWarningSpan.textContent = "";
-                }, 2000);
+                var expiryTime = Date.now() + (keyData.days * 24 * 60 * 60 * 1000);
+                localStorage.setItem('antina_key', key);
+                localStorage.setItem('antina_expiry', expiryTime);
+                localStorage.setItem('antina_maxSeconds', keyData.maxSec);
+                
+                currentKeyData = {
+                    maxSeconds: keyData.maxSec,
+                    expiryTimestamp: expiryTime
+                };
+                
                 playSound();
+                visualEffect(confirmLoginBtn);
+                showDashboard();
+                return true;
+            }
+
+            // Auto Login Check
+            function checkAutoLogin() {
+                var savedKey = localStorage.getItem('antina_key');
+                var savedExpiry = localStorage.getItem('antina_expiry');
+                var savedMax = localStorage.getItem('antina_maxSeconds');
+                
+                if(savedKey && savedExpiry && savedMax) {
+                    var expiryNum = parseInt(savedExpiry, 10);
+                    if(Date.now() < expiryNum) {
+                        currentKeyData = {
+                            maxSeconds: parseInt(savedMax, 10),
+                            expiryTimestamp: expiryNum
+                        };
+                        showDashboard();
+                        return true;
+                    } else {
+                        localStorage.removeItem('antina_key');
+                        localStorage.removeItem('antina_expiry');
+                        localStorage.removeItem('antina_maxSeconds');
+                    }
+                }
                 return false;
             }
+
+            // Logout
+            function logout() {
+                playSound();
+                localStorage.removeItem('antina_key');
+                localStorage.removeItem('antina_expiry');
+                localStorage.removeItem('antina_maxSeconds');
+                
+                if(globalCountdownInterval) clearInterval(globalCountdownInterval);
+                stopCurrentAttack();
+                currentKeyData = null;
+                showLogin();
+                accessInput.value = '';
+            }
+
+            // Stop current attack
+            function stopCurrentAttack() {
+                if(activeAttackInterval) {
+                    clearInterval(activeAttackInterval);
+                    activeAttackInterval = null;
+                }
+                if(currentAttackTimeout) {
+                    clearTimeout(currentAttackTimeout);
+                    currentAttackTimeout = null;
+                }
+                isAttackRunning = false;
+                if(confirmAttackBtn) confirmAttackBtn.disabled = false;
+                if(attackPanelCard) attackPanelCard.classList.remove('attack-blocked');
+            }
+
+            // Add attack to history with live countdown
+            function addAttackToHistory(durationSeconds) {
+                // Remove placeholder if exists
+                if(historyContainer.children.length === 1 && historyContainer.children[0].innerText.indexOf("No attacks") !== -1) {
+                    historyContainer.innerHTML = '';
+                }
+                
+                var remaining = durationSeconds;
+                var historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = '<div><strong>⚔️ ATTACK</strong> (' + durationSeconds + 's)<br><small class="attack-timer">' + remaining + 's remaining</small></div><div><span class="attack-status">RUNNING</span></div>';
+                historyContainer.prepend(historyItem);
+                
+                // Limit history items
+                while(historyContainer.children.length > 8) {
+                    historyContainer.removeChild(historyContainer.lastChild);
+                }
+                
+                var timerSpan = historyItem.querySelector('.attack-timer');
+                var statusSpan = historyItem.querySelector('.attack-status');
+                
+                var interval = setInterval(function() {
+                    if(remaining > 0) {
             
-            // Lock attack
-            isAttackRunning = true;
-            confirmAttackBtn.disabled = true;
-            attackPanelCard.classList.add('attack-blocked');
-            attackWarningSpan.textContent = "🔥 ATTACK IN PROGRESS...";
-            
-            // Add to history
-            addAttackToHistory(seconds);
-            
-            // Set timeout to release lock
-            currentAttackTimeout = setTimeout((
