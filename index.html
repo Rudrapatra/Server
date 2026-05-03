@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ANTINA SERVER | Premium Dark Neon UI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #050505;
+            font-family: 'Poppins', 'Segoe UI', 'Orbitron', monospace;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 580px;
+            background: rgba(5, 5, 5, 0.6);
+            backdrop-filter: blur(16px);
+            border-radius: 48px;
+            border: 1px solid rgba(255, 26, 26, 0.35);
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6);
+            z-index: 2;
+            padding: 1.8rem 1.5rem;
+            transition: all 0.3s;
+        }
+
+        /* Logo */
+        .logo-wrapper {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .logo-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ff1a1a;
+            box-shadow: 0 0 20px rgba(255, 26, 26, 0.6);
+        }
+
+        /* Typing */
+        .typing-area {
+            text-align: center;
+            margin: 0.5rem 0 1.5rem;
+        }
+        .typing-text {
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: 'Orbitron', monospace;
+            color: #ff1a1a;
+            text-shadow: 0 0 8px #ff1a1a;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .cursor-blink {
+            animation: blinkCursor 1s step-end infinite;
+        }
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Price List (small cards, row) */
+        .price-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 1rem 0 1.2rem;
+        }
+        .price-chip {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(255, 26, 26, 0.5);
+            border-radius: 60px;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #ffcccc;
+            cursor: pointer;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+            text-align: center;
+        }
+        .price-chip:hover {
+            background: #ff1a1a20;
+            border-color: #ff1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 0 8px #ff1a1a;
+        }
+        .price-chip span {
+            color: #ff1a1a;
+            font-weight: 800;
+        }
+
+        /* Input & Buttons */
+        .glass-input {
+            width: 100%;
+            background: rgba(15, 15, 15, 0.9);
+            border: 1.5px solid rgba(255, 26, 26, 0.5);
+            border-radius: 50px;
+            padding: 0.9rem 1.2rem;
+            font-size: 0.9rem;
+            color: white;
+            outline: none;
+        }
+        .glass-input:focus {
+            border-color: #ff1a1a;
+            box-shadow: 0 0 12px #ff1a1a80;
+        }
+        .btn-neon {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 26, 26, 0.1);
+            border: 1.5px solid #ff1a1a;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: #ff1a1a;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+        .btn-neon:hover {
+            background: #ff1a1a;
+            color: #050505;
+            box-shadow: 0 0 18px #ff1a1a;
+        }
+        .secondary-btn {
+            background: transparent;
+            border-color: #ff1a1a80;
+        }
+        .error-msg {
+            color: #ff3a3a;
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: bold;
+        }
+        .shake {
+            animation: shakeAnim 0.3s ease-in-out 0s 2;
+        }
+        @keyframes shakeAnim {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Dashboard */
+        .status-card {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 26, 26, 0.3);
+        }
+        .countdown-glow {
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: linear-gradient(135deg, #ff5e5e, #ff1a1a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+        }
+        .seconds-value {
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            color: #ff1a1a;
+            text-shadow: 0 0 10px #ff1a1a;
+            margin: 6px 0;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            -webkit-appearance: none;
+            background: #2a2a2a;
+            border-radius: 5px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            width: 18px;
+            height: 18px;
+            background: #ff1a1a;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 8px red;
+        }
+        .history-list {
+            max-height: 210px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .history-item {
+            background: #0f0f0fcc;
+            border-left: 3px solid #ff1a1a;
+            border-radius: 16px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        .history-item.completed {
+            opacity: 0.6;
+            border-left-color: #777;
+        }
+        .attack-status {
+            font-weight: bold;
+            font-size: 0.7rem;
+            background: #ff1a1a30;
+            padding: 2px 8px;
+            border-radius: 30px;
+        }
+        .logout-btn {
+            width: auto;
+            padding: 0.4rem 1rem;
+            font-size: 0.7rem;
+            margin: 0;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hidden-page {
+            display: none;
+        }
+        .title-sm {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            color: #ffaaaa;
+        }
+        .attack-blocked {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles-canvas"></canvas>
+    <div class="app-container">
+        <!-- LOGIN PAGE -->
+        <div id="loginPage">
+            <div class="logo-wrapper">
+                <img src="https://i.postimg.cc/kG0vjjBK/file-00000000009c7209a084897cd4b72664.png" class="logo-img" alt="ANTINA">
+            </div>
+            <div class="typing-area">
+                <div class="typing-text" id="typingTitle"></div>
+            </div>
+
+            <!-- PRICE ROW (Small buttons INR) -->
+            <div class="price-row">
+                <div class="price-chip" data-plan="199 INR - 60 Days (300s)">💰 <span>199₹</span> 60D/300s</div>
+                <div class="price-chip" data-plan="250 INR - Permanent (300s)">🔥 <span>250₹</span> PERM/300s</div>
+                <div class="price-chip" data-plan="250 INR - 60 Days (700s)">⚡ <span>250₹</span> 60D/700s</div>
+                <div class="price-chip" data-plan="299 INR - Permanent (700s)">💎 <span>299₹</span> PERM/700s</div>
+            </div>
+
+            <input type="text" id="accessKeyInput" class="glass-input" placeholder="ENTER ACCESS KEY" autocomplete="off">
+            <button id="confirmLoginBtn" class="btn-neon">✓ CONFIRM</button>
+            <button id="buyKeyBtn" class="btn-neon secondary-btn">🛒 BUY KEY</button>
+            <div id="loginError" class="error-msg"></div>
+        </div>
+
+        <!-- DASHBOARD PAGE -->
+        <div id="dashboardPage" class="hidden-page">
+            <div class="flex-between">
+                <img src="https://i.postimg.cc/kG0vjjBK/file-00000000009c7209a084897cd4b72664.png" style="width:45px; height:45px; border-radius:50%; border:1px solid red;">
+                <button id="logoutDashboardBtn" class="btn-neon logout-btn">⤫ LOGOUT</button>
+            </div>
+            <div class="status-card">
+                <div class="title-sm">🔐 KEY STATUS</div>
+                <div id="remainingTimeDashboard" class="countdown-glow">--d --h --m --s</div>
+            </div>
+            <div class="status-card" id="attackPanelCard">
+                <div class="title-sm">🎯 ATTACK PANEL</div>
+                <input type="range" id="attackSlider" min="10" max="300" value="60">
+                <div id="sliderSecondsDisplay" class="seconds-value">60 SECONDS</div>
+                <button id="confirmAttackBtn" class="btn-neon">⚡ CONFIRM ATTACK</button>
+                <div id="attackWarning" style="font-size:0.7rem; color:#ff8888; text-align:center; margin-top:6px;"></div>
+            </div>
+            <div class="status-card">
+                <div class="title-sm">📜 ATTACK HISTORY</div>
+                <div id="historyList" class="history-list">
+                    <div style="text-align:center; color:#aaa;">— No attacks —</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- DOM Elements ----------
+        const loginPage = document.getElementById('loginPage');
+        const dashPage = document.getElementById('dashboardPage');
+        const typingDiv = document.getElementById('typingTitle');
+        const accessInput = document.getElementById('accessKeyInput');
+        const confirmLogin = document.getElementById('confirmLoginBtn');
+        const buyKeyBtn = document.getElementById('buyKeyBtn');
+        const errorDiv = document.getElementById('loginError');
+        const attackSlider = document.getElementById('attackSlider');
+        const sliderSecondsDisplay = document.getElementById('sliderSecondsDisplay');
+        const confirmAttackBtn = document.getElementById('confirmAttackBtn');
+        const historyContainer = document.getElementById('historyList');
+        const remainingSpan = document.getElementById('remainingTimeDashboard');
+        const logoutBtn = document.getElementById('logoutDashboardBtn');
+        const attackWarningSpan = document.getElementById('attackWarning');
+        const attackPanelCard = document.getElementById('attackPanelCard');
+
+        // ---------- State ----------
+        let currentKeyData = null;        // { maxSeconds, expiryTimestamp }
+        let globalCountdownInterval = null;
+        let activeAttackInterval = null;   // only one attack at a time
+        let isAttackRunning = false;
+        let currentAttackEndTimer = null;
+
+        // ---------- Valid Keys (same as before) ----------
+        const validKeys = {
+            "ANTINA_60D_300S": { days: 60, maxSec: 300 },
+            "ANTINA_PERMANET_300S": { days: 6000, maxSec: 300 },
+            "ANTINA_60D_700S": { days: 60, maxSec: 700 },
+            "ANTINA_PERMANENT_700S": { days: 60000, maxSec: 700 }
+        };
+
+        // ---------- Utility Functions ----------
+        function playBeep(type = 'click') {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = (type === 'click') ? 880 : 1250;
+                gain.gain.value = 0.12;
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+                osc.stop(ctx.currentTime + 0.2);
+                ctx.resume();
+            } catch(e) {}
+        }
+
+        function visualBtnEffect(el) {
+            if(!el) return;
+            el.style.transform = 'scale(0.96)';
+            setTimeout(() => { if(el) el.style.transform = ''; }, 120);
+        }
+
+        // ---------- Price Chip: Telegram Redirect with auto-message ----------
+        document.querySelectorAll('.price-chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const planText = chip.getAttribute('data-plan') || chip.innerText;
+                const message = `hey antina bro i need ${planText} please send me qr`;
+                const encodedMsg = encodeURIComponent(message);
+                // Redirect to Telegram with prefilled message
+                window.open(`https://t.me/antinaseller?text=${encodedMsg}`, '_blank');
+                playBeep('click');
+                visualBtnEffect(chip);
+            });
+        });
+
+        // ---------- Login Logic ----------
+        function handleLogin(keyValue) {
+            const key = keyValue.trim();
+            const plan = validKeys[key];
+            if(!plan) {
+                playBeep('click');
+                errorDiv.innerText = "❌ INVALID KEY";
+                accessInput.classList.add('shake');
+                setTimeout(() => accessInput.classList.remove('shake'), 500);
+                setTimeout(() => errorDiv.innerText = "", 1800);
+                return false;
+            }
+            const expiry = Date.now() + (plan.days * 24 * 60 * 60 * 1000);
+            localStorage.setItem('antina_key', key);
+            localStorage.setItem('antina_expiry', expiry);
+            localStorage.setItem('antina_maxSeconds', plan.maxSec);
+            currentKeyData = { maxSeconds: plan.maxSec, expiryTimestamp: expiry };
+            playBeep('click');
+            visualBtnEffect(confirmLogin);
+            showDashboard();
+            return true;
+        }
+
+        function autoLoginCheck() {
+            const savedKey = localStorage.getItem('antina_key');
+            const savedExpiry = localStorage.getItem('antina_expiry');
+            const savedMax = localStorage.getItem('antina_maxSeconds');
+            if(savedKey && savedExpiry && savedMax && Date.now() < parseInt(savedExpiry)) {
+                currentKeyData = { maxSeconds: parseInt(savedMax), expiryTimestamp: parseInt(savedExpiry) };
+                showDashboard();
+                return true;
+            }
+            return false;
+        }
+
+        function logoutSystem() {
+            playBeep('click');
+            localStorage.removeItem('antina_key');
+            localStorage.removeItem('antina_expiry');
+            localStorage.removeItem('antina_maxSeconds');
+            if(globalCountdownInterval) clearInterval(globalCountdownInterval);
+            stopCurrentAttack();  // stop any running attack
+            currentKeyData = null;
+            showLogin();
+            accessInput.value = '';
+            errorDiv.innerText = '';
+        }
+
+        // ---------- Attack Logic (Single Attack at a time) ----------
+        function stopCurrentAttack() {
+            if(activeAttackInterval) {
+                clearInterval(activeAttackInterval);
+                activeAttackInterval = null;
+            }
+            if(currentAttackEndTimer) {
+                clearTimeout(currentAttackEndTimer);
+                currentAttackEndTimer = null;
+            }
+            isAttackRunning = false;
+            if(attackWarningSpan) attackWarningSpan.innerText = "";
+            if(confirmAttackBtn) confirmAttackBtn.disabled = false;
+            if(attackPanelCard) attackPanelCard.classList.remove('attack-blocked');
+        }
+
+        function addAttackToHistory(durationSec) {
+            // Remove placeholder if exists
+            if(historyContainer.children.length === 1 && historyContainer.children[0].innerText.includes("No attacks")) {
+                historyContainer.innerHTML = '';
+            }
+            const entryId = Date.now();
+            let remaining = durationSec;
+            const historyDiv = document.createElement('div');
+            historyDiv.className = 'history-item';
+            historyDiv.setAttribute('data-id', entryId);
+            historyDiv.innerHTML = `
+                <div><strong>⚔️ ATTACK</strong> (${durationSec}s)<br><span class="attack-timer">${remaining}s left</span></div>
+                <div><span class="attack-status">RUNNING</span></div>
+            `;
+            historyContainer.prepend(historyDiv);
+            if(historyContainer.children.length > 7) historyContainer.removeChild(historyContainer.lastChild);
+            
+            const timerSpan = historyDiv.querySelector('.attack-timer');
+            const statusSpan = historyDiv.querySelector('.attack-status');
+            
+            const interval = setInterval(() => {
+                if(remaining > 0) {
+                    remaining--;
+                    if(timerSpan) timerSpan.innerText = `${remaining}s left`;
+                }
+                if(remaining <= 0) {
+                    clearInterval(interval);
+                    if(statusSpan) {
+                        statusSpan.innerText = "COMPLETED";
+                        statusSpan.style.background = "#333";
+                    }
+                    historyDiv.classList.add('completed');
+                    // Remove from active attack flag if this was the main attack
+                    if(activeAttackInterval === interval) activeAttackInterval = null;
+                }
+            }, 1000);
+            
+            // store this interval for later cleanup if needed
+            if(activeAttackInterval) clearInterval(activeAttackInterval); // safety
+            activeAttackInterval = interval;
+            return interval;
+        }
+        
+        function startNewAttack(seconds) {
+            if(isAttackRunning) {
+                // show warning
+                attackWarningSpan.innerText = "⚠️ Another attack is already running! Wait.";
+                setTimeout(() => { if(attackWarningSpan) attackWarningSpan.innerText = ""; }, 2000);
+                playBeep('click');
+                return false;
+            }
+            // Lock attack
+            isAttackRunning = true;
+            confirmAttackBtn.disabled = true;
+            attackPanelCard.classList.add('attack-blocked');
+            attackWarningSpan.innerText = "🔥 ATTACK IN PROGRESS...";
+            
+            // Add to history with live timer
+            addAttackToHistory(seconds);
+            
+            // Set a timer to release the lock after 'seconds' elapse
+            currentAttackEndTimer = setTimeout(() => {
+                isAttackRunning = false;
+                if(confirmAttackBtn) confirmAttackBtn.disabled = false;
+                if(attackPanelCard) attackPanelCard.classList.remove('attack-blocked');
+                if(attackWarningSpan) attackWarningSpan.innerText = "✅ Attack finished. Ready again.";
+                setTimeout(() => { if(attackWarningSpan && attackWarningSpan.innerText === "✅ Attack finished. Ready again.") attackWarningSpan.innerText = ""; }, 2500);
+       
